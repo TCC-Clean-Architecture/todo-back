@@ -12,9 +12,9 @@ async function dynamicImportRepository <T> (repositoryToUse: IRepositoriesLocale
   return module[repository]
 }
 
-const initializeRepository = async (): Promise<void> => {
-  todoRepository = await dynamicImportRepository<ITodoRepository>(chooseRepositoryByEnvironment(process.env.NODE_ENV), 'todoRepository')
-  usersRepository = await dynamicImportRepository<IUsersRepository>(chooseRepositoryByEnvironment(process.env.NODE_ENV), 'usersRepository')
+const initializeRepository = async (locale?: IRepositoriesLocale): Promise<void> => {
+  todoRepository = await dynamicImportRepository<ITodoRepository>(locale ?? chooseRepositoryByEnvironment(process.env.NODE_ENV), 'todoRepository')
+  usersRepository = await dynamicImportRepository<IUsersRepository>(locale ?? chooseRepositoryByEnvironment(process.env.NODE_ENV), 'usersRepository')
 }
 export {
   initializeRepository,

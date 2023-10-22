@@ -4,13 +4,14 @@ import { initializeRepository, todoRepository } from '../../../repositories'
 import { type ITodoListInserted, type ITodoList, type ITodoListBeforeInsert, type ITodoInserted } from '../../../interfaces'
 import { todoFixture } from '../../fixtures/todo.fixture'
 import { todoListFactory } from '../../../factories/todoList'
+import { ObjectId } from 'mongodb'
 
 interface IInsertListHelper {
   todosToInsert: ITodoInserted[]
   listName?: string
 }
 
-describe('Todo repository testing', () => {
+describe('Local Todo repository testing', () => {
   let sandbox: sinon.SinonSandbox
   let clock: sinon.SinonFakeTimers
   const insertList = async ({ todosToInsert, listName }: IInsertListHelper): Promise<ITodoListInserted> => {
@@ -24,7 +25,7 @@ describe('Todo repository testing', () => {
     return todoListCreated
   }
   before(async () => {
-    await initializeRepository()
+    await initializeRepository('mongo')
   })
   beforeEach(async () => {
     sandbox = sinon.createSandbox()
@@ -46,7 +47,7 @@ describe('Todo repository testing', () => {
     })
     it('should not find list when attempt to get a list', async () => {
       const userId = 'thisisuserid'
-      const result = await todoRepository.getById('abcde', 'abcde', userId)
+      const result = await todoRepository.getById(new ObjectId(), 'abcde', userId)
       expect(result).to.equals(null)
     })
     it('should not find todo inside of list todo list', async () => {
@@ -85,7 +86,7 @@ describe('Todo repository testing', () => {
     })
     it('should not find the id', async () => {
       const userId = 'thisisuserid'
-      const result = await todoRepository.getTodoListById('abcde', userId) as ITodoListInserted
+      const result = await todoRepository.getTodoListById(new ObjectId(), userId) as ITodoListInserted
       expect(result).to.deep.equals(null)
     })
   })
@@ -108,7 +109,7 @@ describe('Todo repository testing', () => {
       }
       const userId = 'thisisuserid'
       const todoListUpdated = todoListFactory(updateContent, userId) as ITodoListBeforeInsert
-      const result = await todoRepository.updateTodoList('abcde', todoListUpdated)
+      const result = await todoRepository.updateTodoList(new ObjectId(), todoListUpdated)
       expect(result).to.equals(null)
     })
   })

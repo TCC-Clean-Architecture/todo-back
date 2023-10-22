@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>62/62</span>
+                <span class='fraction'>64/64</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>60/60</span>
+                <span class='fraction'>62/62</span>
             </div>
         
             
@@ -238,7 +238,10 @@
 <a name='L173'></a><a href='#L173'>173</a>
 <a name='L174'></a><a href='#L174'>174</a>
 <a name='L175'></a><a href='#L175'>175</a>
-<a name='L176'></a><a href='#L176'>176</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -270,8 +273,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -418,8 +424,8 @@ import { type ITodoInserted, type ITodoBeforeInsert, type ITodoListBeforeInsert,
 import { todoRepository } from '../repositories'
 &nbsp;
 const todoService = {
-  create: async (listId: Id, todoInstance: ITodoBeforeInsert): Promise&lt;IResponseFactoryPayload&gt; =&gt; {
-    const todoList = await todoRepository.getTodoListById(listId)
+  create: async (listId: Id, todoInstance: ITodoBeforeInsert, userId: Id): Promise&lt;IResponseFactoryPayload&gt; =&gt; {
+    const todoList = await todoRepository.getTodoListById(listId, userId)
     if (!todoList) {
       return {
         statusCode: 400,
@@ -445,8 +451,11 @@ const todoService = {
       content: newTodo
     }
   },
-  list: async (listId: Id): Promise&lt;IResponseFactoryPayload&gt; =&gt; {
-    const result = await todoRepository.getTodoListById(listId)
+&nbsp;
+  list: async (listId: Id, userId: Id): Promise&lt;IResponseFactoryPayload&gt; =&gt; {
+    console.log({ listId, userId })
+    const result = await todoRepository.getTodoListById(listId, userId)
+    console.log({ result })
     if (!result) {
       return {
         statusCode: 404,
@@ -461,8 +470,8 @@ const todoService = {
       content: result
     }
   },
-  getById: async (listId: Id, todoId: Id): Promise&lt;IResponseFactoryPayload&gt; =&gt; {
-    const result = await todoRepository.getById(listId, todoId)
+  getById: async (listId: Id, todoId: Id, userId: Id): Promise&lt;IResponseFactoryPayload&gt; =&gt; {
+    const result = await todoRepository.getById(listId, todoId, userId)
     if (!result) {
       return {
         statusCode: 404,
@@ -477,8 +486,8 @@ const todoService = {
       content: result
     }
   },
-  delete: async (listId: Id, todoId: Id): Promise&lt;IResponseFactoryPayload&gt; =&gt; {
-    const todoList = await todoRepository.getTodoListById(listId)
+  delete: async (listId: Id, todoId: Id, userId: Id): Promise&lt;IResponseFactoryPayload&gt; =&gt; {
+    const todoList = await todoRepository.getTodoListById(listId, userId)
     if (!todoList) {
       return {
         statusCode: 404,
@@ -514,8 +523,8 @@ const todoService = {
       }
     }
   },
-  update: async (listId: Id, todoId: Id, content: Omit&lt;ITodoInserted, '_id'&gt;): Promise&lt;IResponseFactoryPayload&gt; =&gt; {
-    const todoList = await todoRepository.getTodoListById(listId)
+  update: async (listId: Id, todoId: Id, content: Omit&lt;ITodoInserted, '_id'&gt;, userId: Id): Promise&lt;IResponseFactoryPayload&gt; =&gt; {
+    const todoList = await todoRepository.getTodoListById(listId, userId)
     if (!todoList) {
       return {
         statusCode: 404,
@@ -559,8 +568,8 @@ const todoService = {
     const result = await todoRepository.createTodoList(todoList)
     return result
   },
-  deleteTodoList: async (listId: Id): Promise&lt;IResponseFactoryPayload&gt; =&gt; {
-    const result = await todoRepository.deleteList(listId)
+  deleteTodoList: async (listId: Id, userId: Id): Promise&lt;IResponseFactoryPayload&gt; =&gt; {
+    const result = await todoRepository.deleteList(listId, userId)
     if (!result) {
       return {
         statusCode: 500,
@@ -575,8 +584,8 @@ const todoService = {
       content: { _id: listId }
     }
   },
-  getTodoLists: async (): Promise&lt;IResponseFactoryPayload&gt; =&gt; {
-    const result = await todoRepository.getTodoLists()
+  getTodoLists: async (userId: Id): Promise&lt;IResponseFactoryPayload&gt; =&gt; {
+    const result = await todoRepository.getTodoLists(userId)
     return {
       statusCode: 200,
       description: 'Get all lists',
@@ -595,7 +604,7 @@ export {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-10-22T02:32:09.350Z
+                at 2023-10-22T04:07:18.912Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

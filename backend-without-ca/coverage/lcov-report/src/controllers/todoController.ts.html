@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>60/60</span>
+                <span class='fraction'>67/67</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>60/60</span>
+                <span class='fraction'>67/67</span>
             </div>
         
             
@@ -219,13 +219,21 @@
 <a name='L154'></a><a href='#L154'>154</a>
 <a name='L155'></a><a href='#L155'>155</a>
 <a name='L156'></a><a href='#L156'>156</a>
-<a name='L157'></a><a href='#L157'>157</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
@@ -256,6 +264,7 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -267,6 +276,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -286,6 +296,7 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -297,6 +308,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -347,6 +359,7 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -358,6 +371,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -385,6 +399,7 @@ const todoController = {
   post: async (req: Request, res: Response) =&gt; {
     try {
       const listId = req.params.listId
+      const { userId } = req.tokenData
       const todoItem: ITodoBase = req.body
       const todoInstance = todoFactory(todoItem)
       if (todoInstance instanceof Error) {
@@ -396,7 +411,7 @@ const todoController = {
           }
         }))
       }
-      const result = await todoService.create(listId, todoInstance)
+      const result = await todoService.create(listId, todoInstance, userId)
       res.status(result.statusCode).json(responseFactory(result))
     } catch (err: any) {
       return res.status(500).json(responseFactory({
@@ -411,7 +426,8 @@ const todoController = {
   get: async (req: Request, res: Response) =&gt; {
     try {
       const { listId } = req.params
-      const result = await todoService.list(listId)
+      const { userId } = req.tokenData
+      const result = await todoService.list(listId, userId)
       res.status(result.statusCode).json(responseFactory(result))
     } catch (err: any) {
       return res.status(500).json(responseFactory({
@@ -426,7 +442,8 @@ const todoController = {
   getById: async (req: Request, res: Response) =&gt; {
     try {
       const { todoId, listId } = req.params
-      const result = await todoService.getById(listId, todoId)
+      const { userId } = req.tokenData
+      const result = await todoService.getById(listId, todoId, userId)
       res.status(result.statusCode).json(responseFactory(result))
     } catch (err: any) {
       return res.status(500).json(responseFactory({
@@ -441,7 +458,8 @@ const todoController = {
   delete: async (req: Request, res: Response) =&gt; {
     try {
       const { todoId, listId } = req.params
-      const result = await todoService.delete(listId, todoId)
+      const { userId } = req.tokenData
+      const result = await todoService.delete(listId, todoId, userId)
       res.status(result.statusCode).json(responseFactory(result))
     } catch (err: any) {
       return res.status(500).json(responseFactory({
@@ -457,7 +475,8 @@ const todoController = {
     try {
       const { body } = req
       const { todoId, listId } = req.params
-      const result = await todoService.update(listId, todoId, body)
+      const { userId } = req.tokenData
+      const result = await todoService.update(listId, todoId, body, userId)
 &nbsp;
       res.status(result.statusCode).json(responseFactory(result))
     } catch (err: any) {
@@ -473,7 +492,7 @@ const todoController = {
   createList: async (req: Request, res: Response) =&gt; {
     try {
       const body: Omit&lt;ITodoList, 'todos'&gt; = req.body
-      const todoListInstance = todoListFactory(body)
+      const todoListInstance = todoListFactory(body, req.tokenData.userId)
       if (todoListInstance instanceof Error) {
         return res.status(400).json(responseFactory({
           statusCode: 400,
@@ -502,7 +521,8 @@ const todoController = {
   deleteList: async (req: Request, res: Response) =&gt; {
     try {
       const { listId } = req.params
-      const result = await todoService.deleteTodoList(listId)
+      const { userId } = req.tokenData
+      const result = await todoService.deleteTodoList(listId, userId)
       res.status(result.statusCode).json(responseFactory(result))
     } catch (err: any) {
       return res.status(500).json(responseFactory({
@@ -516,7 +536,8 @@ const todoController = {
   },
   getLists: async (req: Request, res: Response) =&gt; {
     try {
-      const result = await todoService.getTodoLists()
+      const tokenData = req.tokenData
+      const result = await todoService.getTodoLists(tokenData.userId)
       res.status(result.statusCode).json(responseFactory(result))
     } catch (err: any) {
       return res.status(500).json(responseFactory({
@@ -538,7 +559,7 @@ export { todoController }
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-10-22T02:32:09.350Z
+                at 2023-10-22T04:07:18.912Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
