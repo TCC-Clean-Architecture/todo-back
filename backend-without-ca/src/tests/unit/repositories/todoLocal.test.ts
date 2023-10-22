@@ -10,7 +10,7 @@ interface IInsertListHelper {
   listName?: string
 }
 
-describe('Todo repository testing', () => {
+describe('Local Todo repository testing', () => {
   let sandbox: sinon.SinonSandbox
   let clock: sinon.SinonFakeTimers
   const insertList = async ({ todosToInsert, listName }: IInsertListHelper): Promise<ITodoListInserted> => {
