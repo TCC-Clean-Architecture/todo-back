@@ -1,11 +1,11 @@
 {
   "name": "2do4u-backend-without-clean-architecture",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Software criado para fins de pesquisa de TCC",
   "main": "index.js",
   "scripts": {
     "coverage": "nyc report --reporter html",
-    "test": "cross-env NODE_ENV=test nyc mocha --timeout=3000 --exit --require ts-node/register src/**/*.test.ts",
+    "test": "cross-env NODE_ENV=test nyc --reporter lcov mocha --timeout=3000 --exit --require ts-node/register src/**/*.test.ts",
     "mocha": "cross-env NODE_ENV=test mocha --timeout=3000 --exit --require ts-node/register src/**/*.test.ts",
     "dev": "cross-env NODE_ENV=dev nodemon --watch src/** --ext ts,json --ignore src/**/*.test.ts --exec ts-node src/index.ts",
     "start": "cross-env NODE_ENV=dev ts-node src/index.ts"
