@@ -1,6 +1,6 @@
 {
   "name": "2do4u-backend-without-clean-architecture",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Software criado para fins de pesquisa de TCC",
   "main": "index.js",
   "scripts": {
